@@ -52,4 +52,21 @@ The total precipitation in 2018 is ``r sum(select(pre_2018,total))``.
 The median number of sports balls in a dumpster in 2017 is 
 `r median(pull(filter(trash_wheel_md,year==2017),sports_balls))`
 
+## Problem 2
 
+# Frist
+```{r}
+pols_month=read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+ separate(col=mon,into=c("year","month","day"),sep="/") 
+  pols_month2=mutate(pols_month,
+   year=as.integer(year),
+   day=as.integer(day),
+   month=as.integer(month),
+   month=recode(month,`1`=month.name[1],`2`=month.name[2],`3`=month.name[3],
+                 `4`=month.name[4],`5`=month.name[5],`6`=month.name[6],
+                 `7`=month.name[7],`8`=month.name[8],`9`=month.name[9],
+                 `10`=month.name[10],`11`=month.name[11],`12`=month.name[12]),
+   persident=ifelse(pull(pols_month,prez_gop)==0, "dem","gop")) 
+  pols_month3=select(pols_month2,-prez_dem,-prez_gop,-day)
+  pols_month3
+```
