@@ -50,6 +50,6 @@ In cleaned and combined dataset presipitation,there are ``r nrow(binded_data)`` 
 
 The total precipitation in 2018 is ``r sum(select(pre_2018,total))``.
 The median number of sports balls in a dumpster in 2017 is 
-``r median(pull(filter(trash_wheel_md,year==2017),sports_balls))``
+`r median(pull(filter(trash_wheel_md,year==2017),sports_balls))`
 
 
