@@ -125,3 +125,14 @@ In cleanded dataset of unemplyment, there are `r nrow(unemploy3)` rows and `r nc
 
 In cleanded dataset of merged dataset, there are `r nrow(total2)` rows and `r ncol(total2)` columns. The range of year is `r min(pull(total2,year))` to `r max(pull(total2,year))`.The key variables in this dataset are year and month.
 
+# Problem3
+```{r}
+pop_name=read_csv("./data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>% 
+    mutate(gender=str_to_lower(gender),
+           ethnicity=str_to_lower(ethnicity),
+           childs_first_name=str_to_lower(childs_first_name),
+          ethnicity=recode(ethnicity,"asian and paci"="asian and pacific islander","black non hisp"="black non hispanic","white non hisp"="white non hispanic"))
+pop_name2=distinct(pop_name)
+pop_name2
+```
