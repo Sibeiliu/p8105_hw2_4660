@@ -114,3 +114,14 @@ total1=left_join(pols_month3,snp)
 total2=left_join(total1,unemploy3)
 total2
 ```
+## Description of Problem 2
+
+In cleanded dataset of pols_month, there are `r nrow(pols_month3)` rows and `r ncol(pols_month3)` columns. The range of year is `r min(pull(pols_month3,year))` to `r max(pull(pols_month3,year))`.The key variables in this dataset are year and month. The pols_month table represent the number of national politicians who are democratic or republican during this time.
+
+
+In cleanded dataset of snp, there are `r nrow(snp)` rows and `r ncol(snp)` columns. The range of year is `r min(pull(snp,year))` to `r max(pull(snp,year))`.The key variables in this dataset are year and month.
+
+In cleanded dataset of unemplyment, there are `r nrow(unemploy3)` rows and `r ncol(unemploy3)` columns. The range of year is `r min(pull(unemploy3,year))` to `r max(pull(unemploy3,year))`.The key variables in this dataset are year and month.
+
+In cleanded dataset of merged dataset, there are `r nrow(total2)` rows and `r ncol(total2)` columns. The range of year is `r min(pull(total2,year))` to `r max(pull(total2,year))`.The key variables in this dataset are year and month.
+
