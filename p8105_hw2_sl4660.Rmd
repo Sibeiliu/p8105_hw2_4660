@@ -1,0 +1,6 @@
+---
+title: "p8105_hw2_sl4660"
+author: "Sibei Liu"
+date: "2019/10/1"
+output: github_document
+---
