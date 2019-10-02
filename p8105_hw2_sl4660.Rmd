@@ -136,3 +136,11 @@ pop_name=read_csv("./data/Popular_Baby_Names.csv") %>%
 pop_name2=distinct(pop_name)
 pop_name2
 ```
+```{r}
+olivia=filter(pop_name2,gender=="female"&childs_first_name=="olivia") %>% 
+select(year_of_birth,ethnicity,rank) %>% 
+pivot_wider(
+  names_from = "year_of_birth", 
+  values_from = "rank")
+olivia
+```
