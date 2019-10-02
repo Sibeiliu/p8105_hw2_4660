@@ -107,3 +107,10 @@ unemploy_tidy_data =
    ) 
    unemploy3
 ```
+
+## Mergeing
+```{r}
+total1=left_join(pols_month3,snp)
+total2=left_join(total1,unemploy3)
+total2
+```
