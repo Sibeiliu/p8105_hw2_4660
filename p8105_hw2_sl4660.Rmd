@@ -70,3 +70,21 @@ pols_month=read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
   pols_month3=select(pols_month2,-prez_dem,-prez_gop,-day)
   pols_month3
 ```
+
+# Second
+```{r}
+snp=read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+ separate(col=date,into=c("month","day","year"),sep="/") %>% 
+ mutate(
+   day=as.integer(day),
+   year=as.integer(year),
+   month=as.integer(month)) %>% 
+   arrange(year,month) %>% 
+mutate(month=recode(month,`1`=month.name[1],`2`=month.name[2],`3`=month.name[3],
+                 `4`=month.name[4],`5`=month.name[5],`6`=month.name[6],
+                 `7`=month.name[7],`8`=month.name[8],`9`=month.name[9],
+                 `10`=month.name[10],`11`=month.name[11],`12`=month.name[12])) %>% 
+select(-day) %>% 
+  select(year,month,close)
+snp
+```
