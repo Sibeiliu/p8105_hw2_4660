@@ -20,3 +20,24 @@ trash_wheel=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet=
    mutate(sports_balls=as.integer(round(sports_balls)))
  trash_wheel_md
 ```
+
+```{r}
+pre_2018=read_excel("./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",sheet=5,skip=1) %>% 
+  janitor::clean_names() %>% 
+  drop_na(total,month) %>% 
+  mutate(year="2018")
+
+
+pre_2017=read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx",sheet=7,skip=1) %>% 
+ janitor::clean_names() %>% 
+  drop_na(total,month) %>% 
+  mutate(year="2017")
+ 
+binded_data=bind_rows(pre_2017,pre_2018) %>% 
+  mutate(
+    month=recode(month,`1`=month.name[1],`2`=month.name[2],`3`=month.name[3],
+                 `4`=month.name[4],`5`=month.name[5],`6`=month.name[6],
+                 `7`=month.name[7],`8`=month.name[8],`9`=month.name[9],
+                 `10`=month.name[10],`11`=month.name[11],`12`=month.name[12])
+  )
+binded_data
