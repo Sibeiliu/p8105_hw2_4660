@@ -41,3 +41,15 @@ binded_data=bind_rows(pre_2017,pre_2018) %>%
                  `10`=month.name[10],`11`=month.name[11],`12`=month.name[12])
   )
 binded_data
+```
+**Descriptions**
+
+In cleaned dataset trash_wheel,there are ``r nrow(trash_wheel_md)`` rows and ``r ncol(trash_wheel_md)`` columns. I think the key variable to locate the row we want is dumpster.Because dumpter has the unique number in each rows. The tables consisit of three different information. First is the key variable:dumspter number. Second is the date collection. Third is the type and amount of litters including variables weight_tons,volume_cubic_yard,plastic_bottles,polystyrene,cigarette_butts,glass_bottles,grocery_bags,chip_bags,sports_balls
+
+In cleaned and combined dataset presipitation,there are ``r nrow(binded_data)`` rows and ``r ncol(binded_data)`` columns. I think the key variables to locate the row we want are year and month.Because only according to the year and month,could we locate the detailed presipitation amount.
+
+The total precipitation in 2018 is ``r sum(select(pre_2018,total))``.
+The median number of sports balls in a dumpster in 2017 is 
+``r median(pull(filter(trash_wheel_md,year==2017),sports_balls))``
+
+
