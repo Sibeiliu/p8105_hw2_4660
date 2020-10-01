@@ -58,6 +58,7 @@ The median number of sports balls in a dumpster in 2017 is
 ```{r}
 pols_month=read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
  separate(col=mon,into=c("year","month","day"),sep="/") 
+
   pols_month2=mutate(pols_month,
    year=as.integer(year),
    day=as.integer(day),
@@ -66,9 +67,22 @@ pols_month=read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
                  `4`=month.name[4],`5`=month.name[5],`6`=month.name[6],
                  `7`=month.name[7],`8`=month.name[8],`9`=month.name[9],
                  `10`=month.name[10],`11`=month.name[11],`12`=month.name[12]),
-   persident=ifelse(pull(pols_month,prez_gop)==0, "dem","gop")) 
+   persident=ifelse(pull(pols_month,prez_gop)==0, "dem","gop"),
+   presi=case_when(
+     prez_gop==1~'gop',
+     prez_dem==1~'dem'
+   )) 
+  
+  
   pols_month3=select(pols_month2,-prez_dem,-prez_gop,-day)
   pols_month3
+  
+  pols = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>%
+  separate(mon, into = c("year", "month", "day"), convert = TRUE) %>% 
+  mutate(month = month.abb[as.factor(month)],
+         president = factor(prez_gop, labels = c("dem", "gop", "gop")))    ##take"2" also as "gop"
+  select(-prez_dem, -prez_gop, -day)
 ```
 
 # Second
@@ -123,7 +137,7 @@ In cleanded dataset of snp, there are `r nrow(snp)` rows and `r ncol(snp)` colum
 
 In cleanded dataset of unemplyment, there are `r nrow(unemploy3)` rows and `r ncol(unemploy3)` columns. The range of year is `r min(pull(unemploy3,year))` to `r max(pull(unemploy3,year))`.The key variables in this dataset are year and month.
 
-In cleanded dataset of merged dataset, there are `r nrow(total2)` rows and `r ncol(total2)` columns. The range of year is `r min(pull(total2,year))` to `r max(pull(total2,year))`.The key variables in this dataset are year and month.
+\ \ \ In cleanded dataset of merged dataset, there are `r nrow(total2)` rows and `r ncol(total2)` columns. The range of year is `r min(pull(total2,year))` to `r max(pull(total2,year))`.The key variables in this dataset are year and  and month.
 
 # Problem3
 ```{r}

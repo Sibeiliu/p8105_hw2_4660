@@ -1,0 +1,44 @@
+---
+title: "Untitled"
+author: "Sibei Liu"
+date: "2020/9/23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(tidyverse)
+```
+
+# problem1
+```{r}
+data1=read_excel("Trash-Wheel-Collection-Totals-8-6-19.xlsx")
+```
+
+
+# problem 2
+```{r}
+
+
+data=read_csv("NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% mutate(
+  Route1=as.character(Route1),
+  Route2=as.character(Route2),
+  Route3=as.character(Route3),
+  Route4,as.character(Route4),
+  Route5=as.character(Route5),
+  Route6=as.character(Route6),
+  Route7=as.character(Route7),
+  Route8=as.character(Route8),
+  Route9=as.character(Route9),
+  Route10=as.character(Route10),
+  Route11=as.character(Route11),
+) 
+
+data2=data%>% pivot_longer(
+  Route1:Route11,
+  names_to="route name",
+  values_to="route nmber"
+)
+```
+

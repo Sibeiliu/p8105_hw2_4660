@@ -1,0 +1,252 @@
+---
+title: "HW2 P8105 2020Fall"
+author: "Junxian Chen"
+date: "9/23/2020"
+output: 
+  html_document:
+    code_folding: show
+    # toc: true
+    # toc_float: true
+---
+
+```{r, include = FALSE}
+library(tidyverse)
+library(readxl)
+
+knitr::opts_chunk$set(
+	echo = TRUE,
+	warning = TRUE,
+  message = FALSE,
+	fig.width = 8, 
+  fig.height = 6,
+  out.width = "90%"
+)
+theme_set(theme_gray(base_size = 10) + theme(legend.position = "bottom"))
+```
+
+# Problem 1
+
+### Part 1. Read and clean the Mr. Trash Wheel sheet
+
+Firstly, load nessary libraries:
+
+```{r, message = FALSE}
+library(tidyverse)
+library(readxl)
+```
+
+Next, read in the data as `trash_wheel_data` and do the clean:
+
+```{r}
+file_path = "Trash-Wheel-Collection-Totals-8-6-19.xlsx"
+trash_wheel_data = 
+  read_excel(file_path, sheet = 'Mr. Trash Wheel', range = cell_cols("A:N")) %>%
+  janitor::clean_names() %>%
+  drop_na(dumpster) %>%
+  mutate(
+    sports_balls = as.integer(round(sports_balls))
+  )
+```
+
+### Part 2. Read and clean precipitation data for 2017 and 2018
+
+```{r}
+# Read and clean precipitation data for 2017
+pre_2017_data = 
+  read_excel(file_path, sheet = '2017 Precipitation', skip = 1) %>%
+  janitor::clean_names() %>% 
+  drop_na()  %>% 
+  mutate(year = 2017)
+```
+
+```{r}
+# Read and clean precipitation data for 2018
+pre_2018_data = 
+  read_excel(file_path, sheet = '2018 Precipitation', skip = 1) %>%
+  janitor::clean_names() %>% 
+  drop_na() %>% 
+  mutate(year = 2018)
+```
+
+```{r, message = FALSE}
+# Combine precipitation datasets and convert month to a character variable
+pre_2017_18 = 
+  full_join(pre_2017_data, pre_2018_data) %>%
+  mutate(month = month.name[month])
+```
+
+### Part 3. A brief summary about these data
+
+The dataset `trash_wheel_data` which comes from the Mr. Trash Wheel sheet has `r nrow(trash_wheel_data)` observations. After omitting row of the sum value of the year, the dataset `pre_2017_data`, which is the precipitation data for 2017, has `r nrow(pre_2017_data)` observations and the dataset `pre_2018_data`, which is the precipitation data for 2018, has `r nrow(pre_2018_data)` observations. The combined precipitation dataset of 2017-18 has `r nrow(pre_2017_18)` observations.
+
+For the dataset `trash_wheel_data` which comes from the Mr. Trash Wheel sheet, the key variables I think should be the '**Month**', '**Weight**' and '**Volume**' of each dumpster. Based on these variables, we can find the trend of trash collection by Mr. Trash Wheel over time and how it performance in different months. Also, the **precipitation value** of each month in each year can be also considered as key variables. Because from the dataset, we can find that the amount of trash Mr. Trash Wheel receives is highly dependent on precipitation, which accords with the description by the dirctor.
+
+According to the data, the total precipitation in 2018 is `r sum(pull(pre_2018_data, total))` inch. The median number of sports balls in a dumpster in 2017 is `r median(pull(filter(trash_wheel_data, year == 2017), sports_balls))`.
+
+
+# Problem 2
+
+```{r}
+transit_data = 
+  read_csv(file = "NYC_Transit_Subway_Entrance_And_Exit_Data.csv",
+           col_types = cols(
+             .default = col_character(),
+             `Station Latitude` = col_double(),
+             `Station Longitude` = col_double(),
+             `ADA` = col_logical(),
+             `Free Crossover` = col_logical(),
+             `Entrance Type` = col_factor(),
+             `Entrance Latitude` = col_double(),
+             `Entrance Longitude` = col_double()
+            )
+  ) %>%
+  janitor::clean_names() %>%
+  mutate(
+    entry = ifelse(entry == "YES", TRUE, FALSE)
+  ) %>%
+  select(
+    line, station_name, station_latitude, station_longitude, route1, route2, route3,
+    route4, route5, route6, route7, route8, route9, route10, route11, entry, entrance_type, 
+    vending, ada
+  )
+
+head(transit_data)
+```
+
+* How many distinct stations are there? Note that stations are identified both by name and by line (e.g. 125th St A/B/C/D; 125st 1; 125st 4/5); the distinct function may be useful here.
+
+```{r}
+transit_data %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+
+* How many stations are ADA compliant?
+
+```{r}
+transit_data %>% 
+  filter(ada == TRUE) %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+
+* What proportion of station entrances / exits without vending allow entrance?
+
+```{r}
+no_vending_count = 
+  transit_data %>% 
+  filter(vending == 'NO') %>% 
+  #distinct(line, station_name) %>% 
+  nrow()
+  
+allow_entry_count = 
+  transit_data %>% 
+  filter(vending == 'NO' & entry == 'TRUE') %>% 
+  #distinct(line, station_name) %>% 
+  nrow()
+
+allow_entry_count / no_vending_count * 100
+```
+
+Reformat data so that route number and route name are distinct variables. How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
+
+```{r}
+transit_data2 = 
+  transit_data %>% 
+  pivot_longer(
+    route1:route11,
+    names_to = "route_number",
+    names_prefix = "xx",
+    values_to = "route_name"
+  )
+
+ 
+  transit_data %>%
+pivot_longer(
+route1:route11,
+names_to = "route_no",
+values_to = "route_name",
+names_prefix = "route"
+)
+
+head(transit_data2)
+```
+
+```{r}
+transit_data2 %>% 
+  filter(route_name == "A") %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+
+```{r}
+transit_data2 %>% 
+  filter(route_name == "A" & ada == TRUE) %>% 
+  distinct(line, station_name) %>% 
+  nrow()
+```
+
+
+# Problem 3
+
+```{r}
+pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  separate(
+    mon,
+    into = c("year", "month", "day"),
+    sep = "/",
+    convert = TRUE
+  ) %>% 
+  mutate(
+    month = month.name[month],
+    president = case_when(
+      prez_gop == 1 ~ 'gop',
+      prez_dem == 1 ~ 'dem' 
+    )
+  ) %>% 
+  select(-day)
+
+head(pols_month)
+```
+
+```{r}
+snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  separate(
+    date,
+    into = c("month", "day", "year"),
+    sep = "/",
+    convert = TRUE
+  ) %>% 
+  mutate(
+    month = month.name[month]) %>% 
+  select(year, month, close)
+
+head(snp)
+```
+
+```{r}
+unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
+  select(year = Year, everything()) %>% 
+  pivot_longer(
+    Jan:Dec,
+    names_to = "month",
+    values_to = "unemployment_rate"
+  ) %>% 
+  mutate(
+    month = match(month, month.abb),
+    year = as.integer(year)
+  ) %>% 
+  mutate(month = month.name[month])
+
+head(unemployment)
+```
+
+```{r}
+data_join = 
+  pols_month %>% 
+  full_join(snp, by = c("year", "month")) %>% 
+  full_join(unemployment, by = c("year", "month"))
+
+head(data_join)
+```
+
